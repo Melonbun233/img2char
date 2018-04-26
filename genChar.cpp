@@ -59,10 +59,13 @@ void constructHtmlHeader(ofstream &output, string out_filename){
 	else 
 		output << "<body style=\"";
 	output << "font-family:monospace; ";
+	output << "line-height:3px; ";
 	output << "font-size:" << FONT_SIZE << "pt\">\n";
+	output << "<pre>\n";
 }
 
 void constructHtmlFooter(ofstream &output){
+	output << "</pre>\n";
 	output << "</body>\n";
 	output << "</html>";
 }
