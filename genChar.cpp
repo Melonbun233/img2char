@@ -1,49 +1,68 @@
 #include "genChar.h"
 
-void generateChar(Image &image, unsigned int col_num){
-	if(width == 0)
+void generateChar(Mat &image,int col_num, string out_filename){
+	ofstream output;
+	output.open(out_filename);
+
+	constructHtmlHeader(output, out_filename);
+	//initialize a look up table for chars
+	uchar lut[256];
+	for (int i = 0; i < 10; i ++){
+		for (int j = 0; j < 26; j ++){
+			if(26 * i + j > 255)
+				break;
+			lut[26 * i + j] = chars[i];
+		}
+	}
+
+	// used to represent different pixels in a picture
+	if(col_num == 0)
 		return;
 	// we will devide the picture into many small squres
-	unsigned int sqr_width = image.columns/width;
-	unsigned int row_num = image.rows/sqr_width;
+	int sqr_width = image.cols/col_num;
+	int row_num = image.rows/sqr_width; //row's number
 	if (row_num == 0) //number of row pixels is too small
 		return;
 
-	for (unsigned int rows = 0; rows < image.rows; rows += sqr_width){
-		for (unsigned int cols = 0; cols < image.columns; cols += sqr_width){
-			unsigned int r_avg = getAvg('r', image, sqr_width, cols, rows);
-			unsigned int g_avg = getAvg('g', image, sqr_width, cols, rows);
-			unsigned int b_avg = getAvg('b', image, sqr_width, cols, rows);
-			unsigned int grayscale = getGrayscale(r_avg, g_avg, b_avg);
-			cout << getChar(QuantumRange, grayscale);
+	for (int rows = 0; rows < image.rows; rows += sqr_width){
+		for (int cols = 0; cols < image.cols; cols += sqr_width){
+			uchar avg = getAvgGray(image, sqr_width, cols, rows);
+			//cout << lut[avg];
+			output << lut[avg];
 		}
-		cout << endl;
-	}
-}
-
-unsigned int getAvg(char tunnel, Image &image, unsigned int sqr_width,
-	unsigned int x, unsigned int y){
-	Quantum *pixels = image.getPixels(x, y, x + sqr_width, y + sqr_width);
-	sum = 0;
-	if(tunnel == 'r'){
-		for (int i = 0; i < sqr_width * sqr_width; i ++)
-			sum += *(pixels + i).red;
-	} else if (tunnel == 'g'){
-		for (int i = 0; i < sqr_width * sqr_width; i ++)
-			sum += *(pixels + i).green;
-	} else {
-		for (int i = 0; i < sqr_width * sqr_width; i ++)
-			sum += *(pixels + i).blue;
+		//cout << endl;
+		output << "\n";
 	}
 
-	return sum/(sqr_width * sqr_width);
+	constructHtmlFooter(output);
+	output.close();
 }
 
-unsigned int getGrayscale(unsigned int r, unsigned int g, unsigned int b){
-	return r * 0.3 + g * 0.59 + b * 0.11;
+uchar getAvgGray(Mat &image, int sqr_width, int x, int y){
+	int sum = 0;
+	for (int rows = y; rows < sqr_width + y; rows ++){
+		uchar *rows_ptr = image.ptr(rows, x);
+		for (int cols = 0; cols < sqr_width; cols ++){
+			sum += rows_ptr[cols];
+		}
+	}
+
+	return (uchar)sum/(sqr_width * sqr_width);
 }
 
-char getChar(unsigned int range, unsigned int grayscale){
-	unsigned int arr_len = sizeof(char_array)/sizeof(*char_array);
-	return char_array[(grayscale/range)*arr_len];
+void constructHtmlHeader(ofstream &output, string out_filename){
+	output << "<!DOCTYPE html>\n";
+	output << "<html>\n<head>\n<meta charset=\"UTF-8\">\n";
+	output << "<title>" << out_filename << "</title>\n</head>\n";
+	if(INVERSE)
+		output << "<body style=\"background-color:#000000; color:#ffffff ";
+	else 
+		output << "<body style=\"";
+	output << "font-family:monospace; ";
+	output << "font-size:" << FONT_SIZE << "pt\">\n";
+}
+
+void constructHtmlFooter(ofstream &output){
+	output << "</body>\n";
+	output << "</html>";
 }

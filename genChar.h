@@ -1,34 +1,36 @@
 // This file contains all functions used to generate chars
+#ifndef GENCHAR_H
+#define GENCHAR_H
 
-#include <Magick++.h>
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
 #include <iostream>
+#include <string>
+#include <fstream>
 
-//used to represent different pixels in a picture
-char char_array[] = " .:-=+*#%@";
+using namespace cv;
+using namespace std;
+
+extern int INVERSE;
+//char array used to represent pixels
+const char chars[] = "@%#*+=-:. ";
+const int FONT_SIZE = 4;
 
 // used to generate char to terminal
 // PRE: 
-//	image object from magick
-//	number of chars per row	
-void generateChar(Image &image, unsigned int col_num);
+//	Mat image from opencv, this should be non-empty
+//	number of chars per row, this may be changed if the width is too large
+void generateChar(Mat &image, int col_num, string out_filename);
 
-// calculate the average r/g/b value of a squre of pixels with up-left corner being (x,y) and 
-// the with being sqr_width
-// PRE:
-//	tunnel: should be one of 'r', 'g' or 'b';
-//	image: image from magick++
-//  sqr_width: width of the squre of pixels
-//	x, y: coordinate (x, y). Where (0, 0) is the most up-left pixel and (cols, rows) is the 
-//		most down-right pixel
-unsigned int getAvgRGB(char tunnel, Image &image, unsigned int sqr_width, 
-	unsigned int x, unsigned int y);
+//get the average uchar value of a squre of pixels grayscale.
+//the most up-left corner of the squre is (x,y) with width sqr_width
+uchar getAvgGray(Mat &image, int sqr_width, int x, int y);
 
-// calculate the grayscale of a pixel according to its rgb values
-// the grayscale value is calculated using different weghts for r/g/b
-// with r: 0.3
-//		g: 0.59
-//		b: 0.11
-unsigned int getGrayscale(unsigned int r, unsigned int g, unsigned int b);
+//construct header and tags for the output html file
+void constructHtmlHeader(ofstream &output, string out_filename);
 
-// get the corresponding characters from giving graysacle
-char getChar(unsigned int range, unsigned int grayscale);
+//construct footer and tags for the output html file
+void constructHtmlFooter(ofstream &output);
+
+#endif 
