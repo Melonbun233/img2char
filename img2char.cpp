@@ -23,8 +23,8 @@ void invalid_arg(){
 }
 
 int main(int argc, char **argv){
-	int INVERSE = 0;	
-	int SPECWIDTH = 0;	
+	INVERSE = 0;	
+	SPECWIDTH = 0;	
 	int width = 0;
 
 	if (argc == 1 || argc > 4){
@@ -36,14 +36,16 @@ int main(int argc, char **argv){
 
 	switch (argc){
 		case 3: {
-			if(argv[2] == "I")
+			if(strcmp(argv[2], "I") == 0)
 				INVERSE = 1;
-			else
+			else {
+				SPECWIDTH = 1;
 				width = strtol(argv[2], NULL, 10);
+			}
 			break;
 		}
 		case 4: {
-			if(argv[3] == "I"){
+			if(strcmp(argv[3], "I") == 0){
 				INVERSE = 1;
 				SPECWIDTH = 1;
 				width = strtol(argv[2], NULL, 10);
@@ -71,6 +73,9 @@ int main(int argc, char **argv){
 	cout << "Start converting image with size ";
 	cout << image.cols << " x " << image.rows << endl;
 	cout << "with " << width << " characters per row" << endl;
+	if (INVERSE)
+		cout << "color inversed" << endl;
+
 
 	//get the file name
 	string out_filename;
@@ -80,6 +85,9 @@ int main(int argc, char **argv){
 	} else {
 		out_filename = "output";
 	}
+
+	if(INVERSE)
+		out_filename += "-inversed";
 
 	out_filename += ".html";
 

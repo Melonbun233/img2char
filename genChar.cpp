@@ -55,7 +55,7 @@ void constructHtmlHeader(ofstream &output, string out_filename){
 	output << "<html>\n<head>\n<meta charset=\"UTF-8\">\n";
 	output << "<title>" << out_filename << "</title>\n</head>\n";
 	if(INVERSE)
-		output << "<body style=\"background-color:#000000; color:#ffffff ";
+		output << "<body style=\"background-color:#000000; color:#ffffff; ";
 	else 
 		output << "<body style=\"";
 	output << "font-family:monospace; ";
