@@ -19,8 +19,8 @@ Usage:
 <I> : whether inverse the color.  
 ```
 ##Example
-Following are two outputs from heart.jpg under test/ folder with width 20 and 50 respectively.  
-**Note**: For better visual effect, try view test/heart-20.html using a browser.
+Following are two outputs from a heart image with width 20 and 50 respectively.  
+**Note**: For better visual effect, try view output html files using a browser.  
 20-width
 ```
     @%%%    %%%%    
