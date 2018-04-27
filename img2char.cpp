@@ -9,6 +9,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
 #include <opencv2/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
 #include "genChar.h"
 using namespace std;
@@ -64,18 +65,24 @@ int main(int argc, char **argv){
 		cout << "Cannot open or find the image" << endl;
 		return -1;
 	}
-	CV_Assert(image.depth() == CV_8U);
-
+	//set width
 	if (SPECWIDTH == 1 && width > image.cols) //width too large
 		width = image.cols;
 	if (SPECWIDTH == 0)
 		width = image.cols;
+
+	CV_Assert(image.depth() == CV_8U);
+	//resize the image to fit the width
+	Mat res_image; 
+	double fac = (double)width/image.cols;
+	resize(image, res_image, Size(), fac, fac, INTER_LINEAR);
+
+
 	cout << "Start converting image with size ";
 	cout << image.cols << " x " << image.rows << endl;
 	cout << "with " << width << " characters per row" << endl;
 	if (INVERSE)
 		cout << "color inversed" << endl;
-
 
 	//get the file name
 	string out_filename;
@@ -88,10 +95,9 @@ int main(int argc, char **argv){
 
 	if(INVERSE)
 		out_filename += "-inversed";
+	out_filename += "-" + to_string(width) + ".html";
 
-	out_filename += ".html";
-
-	generateChar(image, width, out_filename);
+	generateChar(res_image, out_filename);
 
 	return 0;
 }

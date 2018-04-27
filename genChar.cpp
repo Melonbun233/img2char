@@ -1,6 +1,6 @@
 #include "genChar.h"
 
-void generateChar(Mat &image,int col_num, string out_filename){
+void generateChar(Mat &image, string out_filename){
 	ofstream output;
 	output.open(out_filename);
 
@@ -16,21 +16,14 @@ void generateChar(Mat &image,int col_num, string out_filename){
 	}
 
 	// used to represent different pixels in a picture
-	if(col_num == 0)
-		return;
-	// we will devide the picture into many small squres
-	int sqr_width = image.cols/col_num;
-	int row_num = image.rows/sqr_width; //row's number
-	if (row_num == 0) //number of row pixels is too small
+	if(image.cols == 0 || image.rows == 0)
 		return;
 
-	for (int rows = 0; rows < image.rows; rows += sqr_width){
-		for (int cols = 0; cols < image.cols; cols += sqr_width){
-			uchar avg = getAvgGray(image, sqr_width, cols, rows);
-			//cout << lut[avg];
-			output << lut[avg];
+	for (int rows = 0; rows < image.rows; rows ++){
+		uchar *row_ptr = image.ptr(rows, 0);
+		for (int cols = 0; cols < image.cols; cols ++){
+			output << lut[row_ptr[cols]];
 		}
-		//cout << endl;
 		output << "\n";
 	}
 
@@ -38,17 +31,6 @@ void generateChar(Mat &image,int col_num, string out_filename){
 	output.close();
 }
 
-uchar getAvgGray(Mat &image, int sqr_width, int x, int y){
-	int sum = 0;
-	for (int rows = y; rows < sqr_width + y; rows ++){
-		uchar *rows_ptr = image.ptr(rows, x);
-		for (int cols = 0; cols < sqr_width; cols ++){
-			sum += rows_ptr[cols];
-		}
-	}
-
-	return (uchar)sum/(sqr_width * sqr_width);
-}
 
 void constructHtmlHeader(ofstream &output, string out_filename){
 	output << "<!DOCTYPE html>\n";
